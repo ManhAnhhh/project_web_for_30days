@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kinh độ và vĩ độ người dùng</title>
+  </head>
+  <body>
+    <script>
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          document.getElementById("latitude").innerHTML =
+            position.coords.latitude;
+          document.getElementById("longitude").innerHTML =
+            position.coords.longitude;
+        });
+      } else {
+        document.getElementById("latitude").innerHTML =
+          "Trình duyệt của bạn không hỗ trợ Geolocation.";
+        document.getElementById("longitude").innerHTML = "";
+      }
+    </script>
+    <h1>Kinh độ và vĩ độ hiện tại</h1>
+    <p>
+      <span id="latitude"></span>
+      <span id="longitude"></span>
+    </p>
+  </body>
+  <script>
+    const CapitalFirstLetter = (value) => {
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+    console.log(CapitalFirstLetter("aasdasdnh"));
+  </script>
+  <script>
+    navigator.geolocation.ongeolocationerror = function(error) {
+      switch (error.code) {
+        case PositionError.PERMISSION_DENIED:
+          document.getElementById("latitude").innerHTML = "Người dùng đã từ chối cho phép lấy vị trí.";
+          break;
+        case PositionError.POSITION_UNAVAILABLE:
+          document.getElementById("latitude").innerHTML = "Trình duyệt không thể lấy vị trí của người dùng.";
+          break;
+        case PositionError.TIMEOUT:
+          document.getElementById("latitude").innerHTML = "Trình duyệt đã hết thời gian chờ lấy vị trí của người dùng.";
+          break;
+        default:
+          document.getElementById("latitude").innerHTML = "Lỗi không xác định.";
+          break;
+      }
+    };
+  </script>
+  <h1>Lấy kinh độ và vĩ độ hiện tại</h1>
+  <p>
+    <span id="error"></span>
+  </p>
+</html>
