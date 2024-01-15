@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do List</title>
+    <script
+      src="https://kit.fontawesome.com/203ae9be09.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        transition: all 0.1s linear;
+      }
+      html {
+        font-family: sans-serif;
+      }
+      img {
+        width: 24px;
+      }
+      .container {
+        background-color: #f9f7c9;
+        width: 400px;
+        max-width: 80%;
+        margin: 100px auto;
+        border-radius: 8px;
+        padding: 16px 32px;
+      }
+      .container h2 {
+        margin: 16px 0;
+      }
+      .form {
+        position: relative;
+      }
+      .form input,
+      .form button {
+        padding: 16px;
+        border-radius: 32px;
+        border: none;
+        outline: none;
+      }
+      .form input {
+        background-color: #ebecf0;
+        width: 320px;
+        max-width: 100%;
+      }
+      .form button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: orangered;
+        padding: 16px 32px;
+        color: #fff;
+      }
+      .form button:hover {
+        opacity: 0.8;
+        cursor: pointer;
+      }
+      #tasks {
+        margin: 16px 0;
+        height: 180px;
+      }
+      #tasks .task {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 12px 0;
+      }
+      #tasks .task .content::before {
+        cursor: pointer;
+        position: absolute;
+        top: -2px;
+        left: 0px;
+        content: "";
+        background-image: url(./images/unchecked.png);
+        background-position: center;
+        background-size: cover;
+        padding: 12px;
+      }
+      #tasks .task .content {
+        cursor: pointer;
+        width: fit-content;
+
+        width: -moz-fit-content;
+        position: relative;
+        width: 80%;
+        padding-left: 32px;
+      }
+
+      #tasks .task .delete-task {
+        padding: 4px 7px;
+        border-radius: 50%;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      #tasks .task .delete-task:hover {
+        background-color: #ccc;
+        color: #fff;
+        border-radius: 50%;
+      }
+      #tasks .checked {
+        text-decoration: line-through;
+        color: #ccc;
+      }
+      #tasks .task .checked::before {
+        cursor: pointer;
+        position: absolute;
+        top: -2px;
+        left: 0;
+        content: "";
+        background-image: url(./images/checked.png);
+        background-position: center;
+        background-size: cover;
+        padding: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>
+        To-Do List
+        <span><img src="./images/icon.png" alt="" /></span>
+      </h2>
+      <div class="form">
+        <input id="txtTask" type="text" placeholder="Add your task" />
+        <button id="btnAdd" onclick="addTask()">Add</button>
+      </div>
+      <div id="tasks"></div>
+    </div>
+  </body>
+  <script>
+    const txt = document.getElementById("txtTask");
+    const tasks = document.getElementById("tasks");
+    let data = localStorage.getItem("task")
+      ? JSON.parse(localStorage.getItem("task"))
+      : [];
+    function addTask() {
+      if (txt.value == "") {
+        alert("Please enter a task name!");
+        txt.focus();
+        return;
+      }
+      const dataTask = {
+        id: `${Math.floor(Math.random() * 1000)}`,
+        task: txt.value,
+      };
+      data.push(dataTask);
+      localStorage.setItem("task", JSON.stringify(data));
+      showData();
+      txt.value = "";
+    }
+    txt.addEventListener("keydown", function (e) {
+      if (event.keyCode === 13) {
+        addTask();
+      }
+    });
+    function showData() {
+      const htmls = data.map((item) => {
+        return `
+          <div class="task">
+            <div class="content">${item.task}</div>
+            <span onclick="handleDelete(${item.id})" class="delete-task">&#10005;</span>
+          </div>
+        `;
+      });
+      tasks.innerHTML = htmls.join("");
+      document.querySelectorAll(".content").forEach((item) => {
+        item.onclick = () => {
+          item.classList.toggle("checked");
+        };
+      });
+      const computedHeight = parseFloat(
+        getComputedStyle(tasks).getPropertyValue("height")
+      );
+      tasks.style.overflow = computedHeight > 180 ? "scroll" : "auto";
+    }
+    showData();
+    const handleDelete = (id) => {
+      const indexDelete = data.findIndex((item) => item.id === id.toString());
+      data = data.filter((item, index) => {
+        if (index != indexDelete) return item;
+      });
+      localStorage.setItem("task", JSON.stringify(data));
+      showData();
+    };
+  </script>
+</html>
