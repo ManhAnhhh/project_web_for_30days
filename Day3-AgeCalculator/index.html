@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Day 3 - Age Calculator</title>
+    <link rel="stylesheet" href="./pyro.css" />
     <style>
       * {
         margin: 0;
@@ -12,6 +13,9 @@
       }
       html {
         font-family: Arial, Helvetica, sans-serif;
+      }
+      canvas {
+        display: block;
       }
       .container {
         height: 100vh;
@@ -245,6 +249,10 @@
   </head>
   <body>
     <div class="container">
+      <div class="pyro">
+        <div class="before"></div>
+        <div class="after"></div>
+      </div>
       <div class="calculator">
         <h1>
           Javascript <br />
@@ -271,6 +279,7 @@
         <p id="result"></p>
       </div>
     </div>
+    <audio id="playAudio" src="./nhacnen.mp3"></audio>
   </body>
 
   <script>
@@ -296,9 +305,12 @@
       return true;
     };
     const calculateAge = () => {
+      document.querySelector(".pyro").style.display = "none";
+      stopMusic();
+
       if (checkValue()) {
         const userInput = new Date(input.value);
-        console.log(userInput);
+        // console.log(userInput);
         const yInput = userInput.getFullYear();
         const mInput = userInput.getMonth() + 1;
         const dInput = userInput.getDate();
@@ -313,7 +325,7 @@
           (new Date().valueOf() - userInput.valueOf()) / MILISECONDS_OF_DAY
         );
 
-        let date, month, year;
+        let date, month, year; // luu ngay thang nam sinh
         year = currentYear - yInput;
         if (currentMonth >= mInput) month = currentMonth - mInput;
         else {
@@ -332,7 +344,7 @@
           year--;
         }
 
-        // check value by for loop: 
+        // check value by for loop:
         // nếu day, month, year  == 1 thì là 1 year, 1 month, 1 day
         // nếu day, month, year  == 0 thì là chuỗi rỗng
         // other thì là n years, n months, n days
@@ -359,16 +371,29 @@
 
         if (textArr.length == 2) {
           result.innerHTML = `You are ${textOnlyOne} old `;
+          const checkBirthDay = textArr.some((item) => item.includes("year"));
+          if (checkBirthDay) {
+            document.querySelector(".pyro").style.display = "block";
+            playMusic();
+          }
         } else {
-          result.innerHTML = `You are ${textArr[2]}${textArr[2] && ", "} ${
+          result.innerHTML = `You are ${textArr[2]}${textArr[1] && ", "} ${
             textArr[1]
-          } ${textArr[1] && " and "} ${textArr[0]} old`;
+          } ${textArr[0] && " and"} ${textArr[0]} old`;
+
+          const kyTuThua  = result.innerText.charAt(8); // nếu có
+          if (kyTuThua == ",") result.innerText = result.innerText.replace(kyTuThua, "");
+          // console.log(result.innerText);
+          
         }
         if (
           result.textContent.includes("year") ||
           result.textContent.includes("month")
         ) {
           result.innerHTML += `</br> or <span>${daysAge}</span> days old`;
+        }
+        if (date == 0 && month == 0 && year == 0) {
+          result.innerHTML = "Invalid data";
         }
       }
     };
@@ -379,6 +404,22 @@
     }
     function handleEnter(e) {
       if (e.keyCode === 13) calculateAge();
+    }
+  </script>
+
+<!-- Tắt mở nhạc khi onclick caculate -->
+  <script>
+    var myAudio = document.getElementById("playAudio");
+    function playMusic() {
+      if (myAudio.duration > 0 && !myAudio.paused) {
+        //Its playing...do your job
+      } else {
+        myAudio.play();
+        //Not playing...maybe paused, stopped or never played.
+      }
+    }
+    function stopMusic() {
+      myAudio.pause();
     }
   </script>
 </html>
